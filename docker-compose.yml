@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 services:
   api-server:
@@ -8,14 +8,14 @@ services:
     image: api-server
     restart: unless-stopped
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - PORT=3000
     volumes:
       - ./logs:/logs
     networks:
       - app-network
     ports:
-      - "3000:3000"
+      - '3000:3000'
 
 networks:
   app-network:
