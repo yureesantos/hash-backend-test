@@ -4,14 +4,19 @@ services:
   api-server:
     build:
       context: .
+    env_file: .env
     container_name: api-server
     image: api-server
     restart: unless-stopped
     environment:
-      - NODE_ENV=development
-      - PORT=3000
+      NODE_ENV: $NODE_ENV
+      PORT: $PORT
+      BLACK_FRIDAY: $BLACK_FRIDAY
+      GIFT_QUANTITY: $GIFT_QUANTITY
+      GRPC_PORT: $GRPC_PORT
     volumes:
-      - ./logs:/logs
+      - ./:/usr/app
+    command: /usr/app/entrypoint.sh
     networks:
       - app-network
     ports:

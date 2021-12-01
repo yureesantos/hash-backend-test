@@ -31,18 +31,22 @@ app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+app.use(
+  express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 })
+);
 
 app.use(routes);
 
-app.use((err: ApplicationError, req: Request, res: Response, next: NextFunction) => {
-  if (res.headersSent) {
-    return next(err);
-  }
+app.use(
+  (err: ApplicationError, req: Request, res: Response, next: NextFunction) => {
+    if (res.headersSent) {
+      return next(err);
+    }
 
-  return res.status(err.status || 500).json({
-    error: err.message
-  });
-});
+    return res.status(err.status || 500).json({
+      error: err.message
+    });
+  }
+);
 
 export default app;

@@ -5,19 +5,22 @@ import Joi from '@hapi/joi';
 import BadRequest from '../errors/bad-request';
 import logger from '../logger';
 
-const getMessageFromJoiError = (error: Joi.ValidationError): string | undefined => {
+const getMessageFromJoiError = (
+  error: Joi.ValidationError
+): string | undefined => {
   if (!error.details && error.message) {
     return error.message;
   }
   return error.details && error.details.length > 0 && error.details[0].message
-    ? `PATH: [${error.details[0].path}] ;; MESSAGE: ${error.details[0].message}` : undefined;
+    ? `PATH: [${error.details[0].path}] ;; MESSAGE: ${error.details[0].message}`
+    : undefined;
 };
 
 interface HandlerOptions {
   validation?: {
-    body?: Joi.ObjectSchema
-  }
-};
+    body?: Joi.ObjectSchema;
+  };
+}
 
 /**
  * This router wrapper catches any error from async await
@@ -25,10 +28,7 @@ interface HandlerOptions {
  * instead of crashing the app
  * @param handler Request handler to check for error
  */
-export const requestMiddleware = (
-  handler: RequestHandler,
-  options?: HandlerOptions,
-): RequestHandler => async (req: Request, res: Response, next: NextFunction) => {
+export const requestMiddleware = (handler: RequestHandler, options?: HandlerOptions): RequestHandler => async (req: Request, res: Response, next: NextFunction) => {
   if (options?.validation?.body) {
     const { error } = options?.validation?.body.validate(req.body);
     if (error != null) {
@@ -49,7 +49,7 @@ export const requestMiddleware = (
       });
     }
     next(err);
-  };
+  }
 };
 
 export default requestMiddleware;

@@ -1,27 +1,16 @@
-FROM node:14.17.1 as base
-
-# Add package file
-COPY package*.json ./
-
-# Install deps
-RUN npm i
-
-# Copy source
-COPY src ./src
-COPY tsconfig.json ./tsconfig.json
-COPY openapi.json ./openapi.json
-
-# Build dist
-RUN npm run build
-
-# Start production image build
-FROM gcr.io/distroless/nodejs:14
-
-# Copy node modules and build directory
-COPY --from=base ./node_modules ./node_modules
-COPY --from=base /dist /dist
+FROM node:lts-alpine
 
 
-# Expose port 3000
-EXPOSE 3000
-CMD ["dist/src/server.js"]
+# Create and define the node_modules's cache directory.
+RUN mkdir /usr/cache
+WORKDIR /usr/cache
+
+# Install the application's dependencies into the node_modules's cache directory.
+COPY package.json ./
+# COPY package-lock.json ./
+RUN npm install --ignore-scripts --target-arch=x64
+
+# Create and define the application's working directory.
+RUN mkdir /usr/app
+WORKDIR /usr/app
+
