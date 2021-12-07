@@ -1,7 +1,5 @@
 # Hash Back-end Challenge
 
----
-
 ### **_PARA RODAR O DESAFIO, ACESSE O INSTRUÇÕES.MD_**
 
 ---
