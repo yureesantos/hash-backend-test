@@ -14,7 +14,6 @@ function getDiscount(id?: number) {
   return new Promise((resolve, reject) => {
     client.getDiscount(productId, (err, discount) => {
       if (err) {
-        console.log(err);
         return reject(err);
       }
       logger.info({
