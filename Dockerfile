@@ -1,16 +1,16 @@
-FROM node:lts-alpine
+FROM node:12.16.1
 
+WORKDIR /app
 
-# Create and define the node_modules's cache directory.
-RUN mkdir /usr/cache
-WORKDIR /usr/cache
+COPY ./package.json .
+COPY ./package-lock.json .
 
-# Install the application's dependencies into the node_modules's cache directory.
-COPY package.json ./
-# COPY package-lock.json ./
-RUN npm install --ignore-scripts --target-arch=x64
+RUN npm install --target-arch=x64 --ignore-scripts && npm cache clean --force
 
-# Create and define the application's working directory.
-RUN mkdir /usr/app
-WORKDIR /usr/app
+COPY . .
 
+RUN npm run build
+
+EXPOSE 3000
+
+CMD [ "npm", "start" ]

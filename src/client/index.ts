@@ -13,7 +13,10 @@ function getDiscount(id?: number) {
   const productId = new GetDiscountRequest().setProductid(id);
   return new Promise((resolve, reject) => {
     client.getDiscount(productId, (err, discount) => {
-      if (err) return reject(err);
+      if (err) {
+        console.log(err);
+        return reject(err);
+      }
       logger.info({
         message: `Discount service: ${discount.toObject().percentage}`
       });
@@ -22,4 +25,4 @@ function getDiscount(id?: number) {
     });
   });
 }
-export { getDiscount };
+export { client, getDiscount };

@@ -2,7 +2,6 @@ import { Request, RequestHandler } from 'express';
 import Joi from '@hapi/joi';
 import database from '../../database/products.json';
 import requestMiddleware from '../../middleware/request-middleware';
-import logger from '../../logger';
 import { getDiscount } from '../../client';
 
 export const addCartSchema = Joi.object().keys({
@@ -25,6 +24,7 @@ const add: RequestHandler = async (req: Request<{}, {}, AddReqBody>, res) => {
   const { products } = req.body;
   const productsList: any = [];
   const checkoutValues: any = {};
+  const date = new Date().toLocaleDateString('pt-BR');
 
   for (let i = 0; i < products.length; i += 1) {
     const productData = database.find(item => products[i].id === item.id);
@@ -43,24 +43,25 @@ const add: RequestHandler = async (req: Request<{}, {}, AddReqBody>, res) => {
         is_gift: false
       });
     } else {
-      logger.warn({ warn: 'Gift products isnt available' });
-      return res.status(400).send({ message: 'Gift products isnt available' });
+      return res
+        .status(400)
+        .send({ message: 'Gift products is not available' });
     }
 
-    const date = new Date().toLocaleString();
     if (date === process.env.BLACK_FRIDAY) {
       const giftedProduct = database.find(e => e.is_gift === true);
+      const hasAGiftProduct = productsList.find((p: any) => p.is_gift === true);
 
-      if (giftedProduct) {
+      if (!hasAGiftProduct) {
         productsList.push({
           id: giftedProduct.id,
-          quantity: process.env.GIFT_QUANTITY,
+          quantity: 1,
           unit_amount: 0,
           total_amount: 0,
           discount: 0,
           is_gift: giftedProduct.is_gift
         });
-      } else logger.warn({ warn: 'Gift promotion is over' });
+      }
     }
   }
 

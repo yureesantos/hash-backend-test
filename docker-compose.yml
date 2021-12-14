@@ -1,13 +1,13 @@
 version: '3'
 
 services:
-  api-server:
+  api-client:
     build:
       context: .
-    env_file: .env
-    container_name: api-server
-    image: api-server
+    container_name: api-client
+    image: api-client
     restart: unless-stopped
+    entrypoint: /bin/sh 'entrypoint.sh'
     environment:
       NODE_ENV: $NODE_ENV
       PORT: $PORT
@@ -15,13 +15,15 @@ services:
       GIFT_QUANTITY: $GIFT_QUANTITY
       GRPC_PORT: $GRPC_PORT
     volumes:
-      - ./:/usr/app
-    command: /usr/app/entrypoint.sh
+      - ./logs:/logs
     networks:
       - app-network
     ports:
       - '3000:3000'
-
+  discount:
+    image: hashorg/hash-mock-discount-service
+    ports:
+      - '${GRPC_PORT}:${GRPC_PORT}'
 networks:
   app-network:
     driver: bridge
